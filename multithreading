@@ -1,0 +1,617 @@
+			1)	MULTITHREADING
+/*
+   	 1. Write a program to illustrate creation of threads using Runnable interface (start method start each of the newly
+   	 created thread. Inside the run method there is sleep ( ) for suspend the thread for 500 milliseconds). 
+*/
+
+class MyThreads implements Runnable
+{
+	public static void main(String[] args)
+	{
+    	//MyThreads obj = new MyThreads();
+
+    	// Creating a thread object by implementing Runnable interface.
+    	Thread t1 = new Thread(new MyThreads());
+
+    	t1.start();
+
+    	System.out.println("\nInside Main Function after calling start.!\n");
+	}
+
+	public void run()
+	{
+    	try
+    	{
+        	Thread.sleep(500);
+    	}
+
+    	catch(InterruptedException IE)
+    	{
+        	IE.printStackTrace();
+    	}
+
+    	System.out.println("\nInside Run Function.!\n");
+	}
+}
+
+/*
+	2. Write a program to create a class MyThread in this class a constructor, call the base class constructor, using super
+	and starts the thread. The run method of the class starts after this. It can be observed that both main thread and
+	created child thread are executed concurrently. 
+*/
+
+class MyThread extends Thread
+{
+	public MyThread()
+	{
+    	super();
+    	start();
+	}
+
+	public void run()
+	{
+    	System.out.println("\nChild Thread Started :-\n");
+
+    	try
+    	{
+        	for(int i = 1;i < 6;i++)
+        	{
+            	System.out.println("Child Thread " + i );
+            	Thread.sleep(500);
+        	}
+    	}
+
+    	catch(InterruptedException IE)
+    	{
+        	System.out.println("\nException caught in Child Thread.");
+    	}
+
+    	System.out.println("\nEnd of Child Thread.");
+	}
+}
+
+class Main
+{
+	public static void main(String[] args)
+	{
+    	// Child Thread.
+    	new MyThread();
+
+    	try
+    	{
+        	System.out.println("\nMain Thread started :-");
+        	for(int i = 1;i < 6;i++)
+        	{
+            	System.out.println("Main Thread " + i);
+            	Thread.sleep(500);
+        	}
+    	}
+
+    	catch(InterruptedException IE)
+    	{
+        	IE.printStackTrace();
+        	System.out.println("\nException caught in Main Thread.");
+    	}
+
+    	System.out.println("\nEnd of Main Thread.\n");
+	}
+}
+
+/*
+    3. Write a java program to create five threads with different priorities. Send two threads of highest priority in sleep state. Check the aliveness
+    of the threads and mark which thread is long listing. 
+*/
+
+class ThreadPriority extends Thread
+{
+    // Parameterised Constructor :
+    public ThreadPriority(String name)
+    {
+        super(name);
+    }
+
+    @Override
+    public void run()
+    {
+        System.out.println("\n" + this.getName() + " is running......");
+        System.out.println(this.getName() + " is alive " + this.isAlive());
+
+        if(this.getPriority() == MAX_PRIORITY)
+        {
+            try
+            {
+                System.out.println("THREAD " + this.getName() + " IS MADE TO SLEEP...");
+                Thread.sleep(1000);
+            }
+
+            catch(InterruptedException IE)
+            {
+                System.out.println("\nSleep Exception caught...");
+            }
+        }
+
+        System.out.println(this.getName() + " is still alive : " + this.isAlive());
+    }
+
+    // Main Function :
+    public static void main(String[] args)
+    {
+        // Creating 5 threads :
+        Thread t1 = new ThreadPriority("T1");
+        Thread t2 = new ThreadPriority("T2");
+        Thread t3 = new ThreadPriority("T3");
+        Thread t4 = new ThreadPriority("T4");
+        Thread t5 = new ThreadPriority("T5");
+
+        // Printing priorities :
+        System.out.println("\nPriorities(Before setting) :-\n");
+        System.out.println("T1 : " + t1.getPriority());
+        System.out.println("T2 : " + t2.getPriority());
+        System.out.println("T3 : " + t3.getPriority());
+        System.out.println("T4 : " + t4.getPriority());
+        System.out.println("T5 : " + t5.getPriority());
+
+        // Setting priorities for the thread.
+        t1.setPriority(MIN_PRIORITY);
+        t2.setPriority(MIN_PRIORITY);
+        t3.setPriority(NORM_PRIORITY);
+        t4.setPriority(MAX_PRIORITY);
+        t5.setPriority(MAX_PRIORITY);
+
+        // Printing priorities :
+        System.out.println("\nPriorities(After setting) :-\n");
+        System.out.println("T1 : " + t1.getPriority());
+        System.out.println("T2 : " + t2.getPriority());
+        System.out.println("T3 : " + t3.getPriority());
+        System.out.println("T4 : " + t4.getPriority());
+        System.out.println("T5 : " + t5.getPriority());
+
+        // Checking for alive threads :
+        System.out.println("\nChecking aliveness(Before starting) :-\n");
+        System.out.println("T1 alive : " + t1.isAlive());
+        System.out.println("T2 alive : " + t2.isAlive());
+        System.out.println("T3 alive : " + t3.isAlive());
+        System.out.println("T4 alive : " + t4.isAlive());
+        System.out.println("T5 alive : " + t5.isAlive());
+
+        // Activating two high priority threads :
+        t5.start();
+        t4.start();
+        t3.start();
+        t2.start();
+        t1.start();
+    }
+}
+    4. Write a multithreaded program that calculates various statistical values for a list of numbers. This program will be passed a series of numbers
+    on the command line and will then create three separate worker threads. One thread will determine the average of the numbers, the second will
+    determine the maximum value, and the third will determine the minimum value.
+
+    For example, suppose your program is passed the integers 90 81 78 95 79 72 85
+
+        Output:
+            The average value is 82
+            The minimum value is 72
+            The maximum value is 95
+
+    The variables representing the average, minimum, and maximum values will be stored globally. The worker threads will set these values, and the
+    parent thread will output the values once the workers have exited. 
+*/
+
+class MultiThreading extends Thread
+{
+    // Global variables.
+    private static double avg = 0.0;
+    private static int Max = Integer.MIN_VALUE, Min = Integer.MAX_VALUE;
+
+    public static void main(String[] args)
+    {
+        if(args.length == 0)
+        {
+            System.out.println("\nNo input is given!!!.\n");
+            return;
+        }
+
+        // Creating an array of length as length of command line arguments.
+        int[] integers = new int[args.length];
+
+        System.out.println("\nGiven integers :-\n");
+        for(int i = 0;i < args.length;i++)
+        {
+            integers[i] = Integer.parseInt(args[i]);
+            System.out.print(integers[i] + " ");
+        }
+        System.out.println();
+
+        Thread average = new Thread(() ->
+        {
+            for(int i = 0;i < args.length;i++)
+            {
+                avg += integers[i];
+            }
+
+            avg /= args.length;
+        });
+
+        Thread minimum = new Thread(() ->
+        {
+            for(int i = 0;i < args.length;i++)
+            {
+                if(Min > integers[i])
+                    Min = integers[i];
+            }
+        });
+
+        Thread maximum = new Thread(() ->
+        {
+            for(int i = 0;i < args.length;i++)
+            {
+                if(Max < integers[i])
+                    Max = integers[i];
+            }
+        });
+
+        average.start();
+        minimum.start();
+        maximum.start();
+
+        // First completes the execution of the 3 threads and continues main thread :
+        try
+        {
+            average.join();
+            minimum.join();
+            maximum.join();
+        }
+
+        catch(InterruptedException IE)
+        {
+            System.out.println("\nJoin exception caught...");
+        }
+
+        System.out.println("\nMaximum = " + Max);
+        System.out.println("Minimum = " + Min);
+        System.out.println("Average = " + avg + "\n");
+    }
+}
+/* 5. Write a program for inventory problem, to illustrate the usage of synchronized keyword. */
+
+class Inventory extends Thread
+{
+    private static int stock, capacity;
+
+    public Inventory(String name)
+    {
+        super(name);
+        stock = 50;
+        capacity = 55;
+    }
+
+    @Override
+    public void run()
+    {
+        for(int i = 1;i < 6;i++)
+        {
+            if(this.getName().equals("buyer"))
+                sell(i);
+
+            else
+                add(i);
+
+            try
+            {
+                Thread.sleep(2000);
+            }
+
+            catch(InterruptedException IE)
+            {
+                System.out.println("\nSleep Exception....");
+            }
+        }
+    }
+
+    // Function to add item to the inventory :
+    public static synchronized void add(int quantity)
+    {
+        if(quantity + stock <= capacity)
+        {
+            stock += quantity;
+            System.out.println("\nStock of quantity " + quantity + " added successfully.... Total stock : " + stock);
+        }
+
+        else
+        {
+            System.out.println("\nStorage not available!!");
+        }
+    }
+
+    // Function to sell item from inventory :
+    public static synchronized void sell(int quantity)
+    {
+        if(stock - quantity >= 0)
+        {
+            stock -= quantity;
+            System.out.println("\nStock of quantity " + quantity + " sold successfully.... Total Stock : " + stock);
+        }
+
+        else
+        {
+            System.out.println("\nRequired amount of stock is not available!!!");
+        }
+    }
+
+    // Main function
+    public static void main(String[] args)
+    {
+        Inventory buyer = new Inventory("buyer");
+        Inventory seller = new Inventory("seller");
+
+        buyer.start();
+        seller.start();
+    }
+}
+/* 6. Write a program for interthread communication process. In this they have three classes consumer, producer and stock. */
+
+class Stock
+{
+    private int item;
+    private boolean available = false;
+
+    // Producer adds an item to the stock
+    public synchronized void produce(int item)
+    {
+        while(available)
+        {
+            try
+            {
+                wait(); // Wait if stock is not empty
+            }
+
+            catch(InterruptedException e)
+            {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        this.item = item;
+        available = true;
+        System.out.println("Produced: " + item);
+        notify();
+    }
+
+    // Consumer consumes an item from the stock
+    public synchronized int consume()
+    {
+        while(!available)
+        {
+            try
+            {
+                wait(); // Wait if stock is empty
+            }
+
+            catch(InterruptedException e)
+            {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        available = false;
+        System.out.println("Consumed: " + item);
+        notify();
+        return item;
+    }
+}
+
+class Producer implements Runnable
+{
+    private Stock stock;
+
+    public Producer(Stock stock)
+    {
+        this.stock = stock;
+    }
+
+    @Override
+    public void run()
+    {
+        for(int i = 1; i <= 5; i++)
+        {
+            stock.produce(i);
+            try
+            {
+                Thread.sleep(1000);
+            }
+
+            catch(InterruptedException e)
+            {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+}
+
+class Consumer implements Runnable
+{
+    private Stock stock;
+
+    public Consumer(Stock stock)
+    {
+        this.stock = stock;
+    }
+
+    @Override
+    public void run()
+    {
+        for(int i = 1; i <= 5; i++)
+        {
+            int consumedItem = stock.consume();
+            try
+            {
+                Thread.sleep(1000);
+            }
+
+            catch(InterruptedException e)
+            {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+}
+
+class InterthreadCommunicationExample
+{
+    public static void main(String[] args)
+    {
+        Stock stock = new Stock();
+        Producer producer = new Producer(stock);
+        Consumer consumer = new Consumer(stock);
+
+        Thread producerThread = new Thread(producer);
+        Thread consumerThread = new Thread(consumer);
+
+        producerThread.start();
+        consumerThread.start();
+    }
+}
+
+/*
+    7. Your English literature friend is very happy with the code you gave him. Now for his research, he used your application to find character
+    frequency in many novels. For larger novels, the application takes a lot of time for computation. So he called you on a fine Sunday to discuss
+    this with you. He wanted to know whether you can improve the speed of the application. You decided to modify the application by using multiple
+    threads to reduce the computation time. For this, accept the number of counters or threads at the beginning of the problem and get the string
+    for each counter or thread. Create a thread by extending the Thread class and take the user entered string as input. Each thread calculates the
+    character frequency for the word assigned to that thread. All the counts are stored locally in the thread and once all the threads are
+    completed print the character frequency for each of the threads.
+
+    Create a class Main and test it.
+    Input and Output format:
+        Refer to sample Input and Output for formatting specifications.
+        Sample input and output:
+            Enter Number of Counters:2
+            Enter text for counter 1: FrequencyCounter
+            Enter text for counter 2: JavaTheCompleteReference
+
+                Counter 1 Result :
+                    C:1 F:1 c:1 e:3 n:2 o:1 q:1 r:2 t:1 u:2 y:1
+                Counter 2 Result :
+                    C:1 J:1 R:1 T:1 a:2 c:1 e:7 f:1 h:1 l:1 m:1 n:1 o:1 p:1 r:1 t:1 v:1 
+*/
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+class CharacterFrequencyCounter extends Thread
+{
+    private String inputText;
+    private Map<Character, Integer> characterFrequency = new HashMap<>();
+
+    public CharacterFrequencyCounter(String inputText)
+    {
+        this.inputText = inputText;
+    }
+
+    @Override
+    public void run()
+    {
+        for(char c : inputText.toCharArray())
+        {
+            if(Character.isLetter(c))
+            {
+                characterFrequency.put(c, characterFrequency.getOrDefault(c, 0) + 1);
+            }
+        }
+    }
+
+    public Map<Character, Integer> getCharacterFrequency()
+    {
+        return characterFrequency;
+    }
+}
+
+class Frequency
+{
+    public static void main(String[] args)
+    {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("\nEnter Number of Counters : ");
+        int numCounters = scanner.nextInt();
+
+        scanner.nextLine(); // Consume the newline character.
+
+        CharacterFrequencyCounter[] counters = new CharacterFrequencyCounter[numCounters];
+
+        System.out.println();
+        for(int i = 0; i < numCounters; i++)
+        {
+            System.out.print("Enter text for counter " + (i + 1) + " : ");
+            String inputText = scanner.nextLine();
+            counters[i] = new CharacterFrequencyCounter(inputText);
+        }
+
+        for(CharacterFrequencyCounter counter : counters)
+        {
+            counter.start();
+        }
+
+        try
+        {
+            for(CharacterFrequencyCounter counter : counters)
+            {
+                counter.join();
+            }
+        }
+
+        catch(InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+
+        System.out.println();
+        for(int i = 0; i < numCounters; i++)
+        {
+            System.out.println("Counter " + (i + 1) + " Result :");
+            for(Map.Entry<Character, Integer> entry : counters[i].getCharacterFrequency().entrySet())
+            {
+                System.out.println(entry.getKey() + ":" + entry.getValue() + " ");
+            }
+            System.out.println();
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
