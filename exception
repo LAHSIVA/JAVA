@@ -1,0 +1,400 @@
+
+	#EXCEPTION
+
+
+
+
+/*
+    1. Write a program for example of try and catch block. In this check whether the given array size is negative or not. 
+*/
+
+import java.util.Scanner;
+
+// User Defined exception for negative size.
+class SizeNegative extends Exception
+{
+    // Parameterised Constructor :
+    public SizeNegative(String s)
+    {
+        super(s);
+    }
+}
+
+class Test1
+{
+    public static void main(String[] args)
+    {
+        int size;
+        Scanner in = new Scanner(System.in);
+
+        try
+        {
+            System.out.print("\nEnter size of the array : ");
+            size = in.nextInt();
+
+            if(size < 0)
+                throw new SizeNegative("Size of array is negative.");
+        }
+
+        catch(SizeNegative s)
+        {
+            s.printStackTrace();
+        }
+
+        finally
+        {
+            in.close();
+        }
+    }
+}
+
+/* 2. Write a program for example of multiple catch statements occurring in a program. */
+
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+// User Defined exception for negative size.
+class Negative extends Exception
+{
+    // Parameterised Constructor :
+    public Negative(String s)
+    {
+        super(s);
+    }
+}
+
+class MultipleCatch
+{
+    public static void main(String[] args)
+    {
+        Scanner in = new Scanner(System.in);
+
+        try {
+            System.out.print("\nEnter a positive integer : ");
+            int num = in.nextInt();
+
+            if(num < 0)
+                throw new Negative("Given number is negative.");
+        }
+
+        catch(InputMismatchException E) {
+            System.out.println("\nInvalid integer!\n");
+        }
+
+        catch(Negative N) {
+            System.out.println("\nNegative integer found!\n");
+        }
+
+        finally {
+            in.close();
+        }
+    }
+}
+/* 3. Write a program to illustrate sub class exception precedence over base class. */
+
+class Base
+{
+    void fun() throws Exception
+    {
+        System.out.println("\nBase class Function.");
+        throw new Exception("Base Exception!");
+    }
+}
+
+class Sub extends Base
+{
+    @Override
+    void fun() throws Exception
+    {
+        System.out.println("\nSub-class Function.");
+        throw new Exception("Sub-class Exception");
+    }
+}
+
+class Test3
+{
+    public static void main(String[] args)
+    {
+        Base obj = new Sub();
+        try
+        {
+            obj.fun();
+        }
+        catch(Exception E)
+        {
+            E.printStackTrace();
+        }
+    }
+}
+/*
+    4. Write a program to do division of two numbers. Make function called doDivision( ) to do division of two numbers. During the division process if
+    runtime error may occur throw error to calling function. Handle ArithmeticException, ArrayIndexOutofBoundsException, NumberFormatException in
+    main( ) method only. 
+*/
+
+import java.util.Scanner;
+
+class DivisionException
+{
+    public static void main(String[] args)
+    {
+        Scanner in = new Scanner(System.in);
+        try
+        {
+            int num1, num2;
+
+            System.out.print("\nEnter first integer : ");
+            num1 = Integer.parseInt(in.nextLine());
+
+            System.out.print("Enter second integer : ");
+            num2 = Integer.parseInt(in.nextLine());
+
+            System.out.println("\n" + num1 + "/" + num2 + " = " + doDivision(num1, num2));
+
+        }
+
+        catch(ArithmeticException E)
+        {
+            System.out.println("\nArithmetic Exception :-\n\t" + E.toString() + "\n");
+        }
+
+        catch(NumberFormatException N)
+        {
+            System.out.println("\nNumber format Exception :-\n\t" + N.toString() + "\n");
+        }
+
+        catch(ArrayIndexOutOfBoundsException A)
+        {
+            System.out.println("\nArray index out of bound exception :-\n\t" + A.toString() + "\n");
+        }
+
+        finally
+        {
+            in.close();
+        }
+    }
+
+    public static int doDivision(int num1, int num2)
+    {
+        if(num2 == 0)
+            throw new ArithmeticException("Divide by Zero");
+        return num1 / num2;
+    }
+}
+/*
+    5. Write a program in Java to display name and roll number of students. Initialize respective array variables for 10 students. Handle
+    ArrayIndexOutOfBoundsException, so that any such problem doesn't cause illegal termination of program. 
+*/
+
+class Students
+{
+    public static void main(String[] args)
+    {
+        String[] name = new String[10], roll = new String[10];
+
+        // Setting the details.
+        for(int i = 0;i < 10;i++)
+        {
+            name[i] = "S" + (i + 1);
+            roll[i] = "R" + (i + 1);
+        }
+
+        // Displaying data.
+        try
+        {
+            System.out.println();
+            for(int i = 0; i <= 10; i++)
+            {
+                System.out.println((i + 1) + ". " + name[i] + " (" + roll[i] + ")");
+            }
+        }
+
+        catch(ArrayIndexOutOfBoundsException A)
+        {
+            System.out.println("\nNo such index found : " + A.toString() + "\n");
+        }
+    }
+}
+
+/*
+    6. Create a user-defined exception class called “NoMatchException” using extends keyword. Write a constructor for this class that takes a string
+    argument and stores it inside the object with a string handle. Write a method that prints out the stored string. Create a try-catch clause
+    to exercise the created exception when a user entered string is not equal to “India”; 
+*/
+
+import java.util.Scanner;
+
+class NoMatchException extends Exception
+{
+    private String handle;
+
+    public NoMatchException(String S)
+    {
+        handle = S;
+    }
+
+    public String toString()
+    {
+        return "NoMatchException : " + handle;
+    }
+}
+
+class Test6
+{
+    public static void main(String[] args)
+    {
+        Scanner in = new Scanner(System.in);
+
+        try
+        {
+            String country;
+            System.out.print("\nEnter a country : ");
+            country = in.nextLine();
+
+            if(!country.equalsIgnoreCase("India"))
+                throw new NoMatchException("String doesn't match India");
+
+            System.out.println("\nGiven country name : " + country + "\n");
+        }
+
+        catch(NoMatchException NM)
+        {
+            System.out.println("\n" + NM.toString());
+        }
+
+        finally
+        {
+            in.close();
+        }
+    }
+}
+
+/*
+    7. Write an application that displays a series of at least five student ID numbers (that you have stored in an array) and asks the user to enter a
+    numeric test score for the student. Create a ScoreException class, and throw a ScoreException for the class if the user does not enter a valid score
+    (less than or equal to 100). Catch the ScoreException, display an appropriate message, and then store a 0 for the student’s score. At the end of the
+    application, display all the student IDs and scores. 
+*/
+
+import java.util.Scanner;
+
+class ScoreException extends Exception
+{
+    public ScoreException(String S)
+    {
+        super(S);
+    }
+
+    public String toString()
+    {
+        return "Score Exception : Invalid score...";
+    }
+}
+
+class StudentScores
+{
+    public static void main(String[] args)
+    {
+        Scanner in = new Scanner(System.in);
+
+        String[] ID = {"S1", "S2", "S3", "S4", "S5"};
+        float[] scores;
+        scores = new float[]{-1, -1, -1, -1, -1};
+
+        System.out.println();
+        for(int i = 0;i < 5;i++)
+        {
+            try
+            {
+                System.out.print("Enter score for " + ID[i] + " : ");
+                scores[i] = Float.parseFloat(in.nextLine());
+
+                if(scores[i] < 0 || scores[i] > 100)
+                    throw new ScoreException(scores[i] + " is not a valid score at index " + i);
+
+            }
+
+            catch(ScoreException S)
+            {
+                System.out.println("\n" + S.toString() + "\n");
+                scores[i] = 0.0f;
+            }
+
+            catch(NumberFormatException N)
+            {
+                System.out.println("\nNumberFormatException occurred : " + N.getMessage() + "\n");
+                scores[i] = 0.0f;
+            }
+        }
+
+        in.close();
+        // Displaying student IDs and scores.
+        System.out.println("\nScores :-\n");
+        for(int i = 0;i < 5;i++)
+        {
+            System.out.println((i + 1) + ". " + ID[i] + " : " + scores[i]);
+        }
+    }
+}
+/*
+    8. A typical requirement of a custom exception called “WeakPasswordException” would be for validation purposes. In this exercise, Let's validate a
+    password input. A password is said to be strong if it satisfies the following criteria
+
+        i) It should be a minimum of 10 characters and a maximum of 20 characters.
+        ii) It should contain at least one digit.
+        iii) It should contain at least one special character (non-numeric, non-alphabetic).
+        iv) It should contain at least one letter.
+
+    If the password fails any one of the criteria, it is considered as weak. 
+*/
+
+import java.util.Scanner;
+import java.util.regex.Pattern;
+
+class WeakPasswordException extends Exception
+{
+    public WeakPasswordException(String S)
+    {
+        super(S);
+    }
+}
+
+class PasswordChecker
+{
+    public static void main(String[] args)
+    {
+        String password;
+        Scanner in = new Scanner(System.in);
+
+        try
+        {
+            System.out.print("\nEnter a valid password : ");
+            password = in.nextLine();
+
+            // Checking length :
+            if(password.length() < 10 || password.length() > 20)
+                throw new WeakPasswordException("Length not satisfied");
+
+            if(!Pattern.matches(".*\\d.*", password))  // Checking for the presence of a digit.
+                throw new WeakPasswordException("Digit missing");
+
+            if(!Pattern.matches(".*[\\W_].*", password))  // Checking for the presence of anything other than letters and digits.
+                throw new WeakPasswordException("Special character missing");
+
+            if(!Pattern.matches(".*[a-zA-Z].*", password))  // Checking for the presence letters.
+                throw new WeakPasswordException("Letter missing");
+        }
+
+        catch(WeakPasswordException W)
+        {
+            System.out.println("\n" + W.getMessage() + "\n");
+        }
+
+        finally
+        {
+            System.out.println("END");
+            in.close();
+        }
+    }
+}
+
