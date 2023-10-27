@@ -1,0 +1,274 @@
+
+#﻿Task 1: Read and Display File with Line Numbers
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+
+public class DisplayFileWithLineNumbers {
+    public static void main(String[] args) {
+        String filePath = "your_file.txt"; // Replace with the actual file path
+
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath)) {
+            String line;
+            int lineNumber = 1;
+
+
+            while ((line = reader.readLine()) != null) {
+                System.out.println(lineNumber + ". " + line);
+                lineNumber++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+#Task 2: Collect File Statistics
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+
+public class FileStatistics {
+    public static void main(String[] args) {
+        String filePath = "your_file.txt"; // Replace with the actual file path
+        int totalLines = 0;
+        int blankLines = 0;
+        int linesWithSemicolon = 0;
+
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath)) {
+            String line;
+
+
+            while ((line = reader.readLine()) != null) {
+                totalLines++;
+
+
+                if (line.trim().isEmpty()) {
+                    blankLines++;
+                }
+
+
+                if (line.trim().endsWith(";")) {
+                    linesWithSemicolon++;
+                }
+            }
+
+
+            System.out.println("Total Lines: " + totalLines);
+            System.out.println("Blank Lines: " + blankLines);
+            System.out.println("Lines ending with Semicolon: " + linesWithSemicolon);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+#Task 3: Validate Account Numbers
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+
+public class ValidateAccountNumbers {
+    public static void main(String[] args) {
+        String inputFilePath = "account_numbers.txt"; // Replace with the input file path
+        String outputFilePath = "valid_account_numbers.txt"; // Replace with the output file path
+
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFilePath));
+             PrintWriter writer = new PrintWriter(new FileWriter(outputFilePath)) {
+            String line;
+
+
+            while ((line = reader.readLine()) != null) {
+                if (isValidAccountNumber(line)) {
+                    writer.println(line);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static boolean isValidAccountNumber(String accountNumber) {
+        if (accountNumber.length() != 6) {
+            return false;
+        }
+
+
+        int sum = 0;
+        for (int i = 0; i < 5; i++) {
+            sum += Character.getNumericValue(accountNumber.charAt(i));
+        }
+
+
+        return (sum % 10) == Character.getNumericValue(accountNumber.charAt(5));
+    }
+}
+
+
+#Task 4: Create and Read Text File
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+
+public class CreateAndReadTextFile {
+    public static void main(String[] args) {
+        String filePath = "text_file.txt"; // Replace with the file path
+
+
+        // Write to the file
+        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+            String content = "This is a sample text written to a file.";
+            fos.write(content.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        // Read from the file
+        try (FileInputStream fis = new FileInputStream(filePath)) {
+            int data;
+            while ((data = fis.read()) != -1) {
+                System.out.print((char) data);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+#Task 5: Store and Read Objects
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+
+class Person implements Serializable {
+    private String name;
+
+
+    public Person(String name) {
+        this.name = name;
+    }
+
+
+    public String getName() {
+        return name;
+    }
+}
+
+
+public class StoreAndReadObjects {
+    public static void main(String[] args) {
+        String filePath = "objects.dat"; // Replace with the file path
+
+
+        // Store objects
+        List<Person> people = new ArrayList<>();
+        people.add(new Person("Alice"));
+        people.add(new Person("Bob"));
+
+
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath)) {
+            oos.writeObject(people);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        // Read objects
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath)) {
+            List<Person> readPeople = (List<Person>) ois.readObject();
+            for (Person person : readPeople) {
+                System.out.println("Name: " + person.getName());
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+#Task 6: Store Employee Data with ArrayList
+import java.util.ArrayList;
+import java.util.List;
+
+
+class Employee {
+    private String name;
+    private int age;
+    private String country;
+
+
+    public Employee(String name, int age, String country) {
+        this.name = name;
+        this.age = age;
+        this.country = country;
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+
+    public int getAge() {
+        return age;
+    }
+
+
+    public String getCountry() {
+        return country;
+    }
+}
+public class EmployeeData {
+    public static void main(String[] args) {
+        List<Employee> employees = new ArrayList<>();
+
+
+        employees.add(new Employee("John", 45, "USA"));
+        employees.add(new Employee("Alice", 52, "Canada"));
+        employees.add(new Employee("Bob", 30, "USA"));
+        employees.add(new Employee("Eva", 55, "Canada"));
+
+
+        // Find employees over 50
+        System.out.println("Employees over 50:");
+        for (Employee employee : employees) {
+            if (employee.getAge() > 50) {
+                System.out.println("Name: " + employee.getName() + ", Age: " + employee.getAge());
+            }
+        }
+
+
+        // Print employees from the USA
+        System.out.println("Employees from the USA:");
+        for (Employee employee : employees) {
+            if ("USA".equals(employee.getCountry())) {
+                System.out.println("Name: " + employee.getName() + ", Country: " + employee.getCountry());
+            }
+        }
+
+
+        // Sort employees by country (optional)
+        employees.sort((e1, e2) -> e1.getCountry().compareTo(e2.getCountry()));
+        System.out.println("Employees sorted by country:");
+        for (Employee employee : employees) {
+            System.out.println("Name: " + employee.getName() + ", Country: " + employee.getCountry());
+        }
+    }
+}
+PS8 file handling.txt
+Displaying PS8 file handling.txt.
